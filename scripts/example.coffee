@@ -15,7 +15,7 @@ module.exports = (robot) ->
     if doorType is "pod bay"
       res.reply "I'm afraid I can't let you do that."
     else
-      res.reply "adding link #{doorType} to queue"
+      res.reply "adding link #{doorType}"
 
   robot.hear /badger/i, (res) ->
     res.send "Badgers? BADGERS? WE DON'T NEED NO STINKIN BADGERS"
