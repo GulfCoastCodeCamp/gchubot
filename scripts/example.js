@@ -10,23 +10,38 @@
 
 module.exports = (robot) =>{
 
-  robot.respond( /add link (.*)/i, (res) =>{
-    doorType = res.match[1]
+  var sendMessage = (data,res)=>{
+    robot
+    .http(process.env.HUBBOT_HEROKU_AZURE_FUNCTION_URL)
+    .headers('Content-Type','application/json')
+    .post(JSON.stringify(data))((err,response,body)=>{
+      console.log(err);
+      if(err||response.statusCode !==200){
+        return res.send('Opps')
+      }
+      res.send('Got it')
+    })
+  }
 
-      res.send (`adding link #${doorType}`)
+  robot.respond( /add link (.*)/i, (res) =>{
+    link = res.match[1]
+
+      res.send (`adding link #${link}`)
        var data = {
-         link:doorType
+         link:link
        }
-      robot
-        .http(process.env.HUBBOT_HEROKU_AZURE_FUNCTION_URL)
-        .headers('Content-Type','application/json')
-        .post(JSON.stringify(data))((err,response,body)=>{
-          console.log(err);
-          if(err||response.statusCode !==200){
-            return res.send('Opps')
-          }
-          res.send('Got it')
-        })
+      sendMessage(data,res);
+  });
+
+  robot.respond( /add (.*) with tags (.*)/i, (res) =>{
+    link = res.match[1]
+    tags =res.match[2]
+      res.send (`adding link #${link}`)
+       var data = {
+         link:link,
+         tags:tags
+       }
+      sendMessage(data,res);
   });
 
 }
